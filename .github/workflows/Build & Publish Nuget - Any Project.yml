@@ -1,0 +1,51 @@
+name: Build & Publish Nuget - Any Project
+
+on:
+  workflow_dispatch:
+    inputs:
+      project_path:
+        description: 'relative path from repo root to project file. Example: "./myService/myServiceApi.csproj"'
+        required: true
+      bump_type:
+        description: 'Version bump type ( MAJOR / MINOR / PATCH / NONE ) For Feature Branch - leave empty'
+        default: "NONE"
+
+jobs:
+  
+  log_inputs:
+    runs-on: ubuntu-latest
+    steps:
+    - name: log inputs
+      run: |
+        echo "-------------- inputs --------------"
+        echo project_path: ${{ github.event.inputs.project_path }}
+        echo ""
+        echo "-------------- other variables --------------"
+        echo git ref: $GITHUB_REF
+        echo git ref name: $GITHUB_REF_NAME
+        echo git commit hash: $GITHUB_SHA
+
+  run-main-workflow:
+    name: Run Main Branch Workflow
+    if: |
+      endsWith('main', github.ref_name) || 
+      endsWith('master', github.ref_name) || 
+      endsWith('dev', github.ref_name) || 
+      endsWith('development', github.ref_name)
+    uses: 365scores/workflows/.github/workflows/any_project_build_and_publish.yml@main
+    with:
+      project_path: ${{ github.event.inputs.project_path }}
+      bump_type: ${{ github.event.inputs.bump_type }}
+    secrets: inherit
+
+  run-other-workflow:
+    name: Run Feature Branch Workflow
+    if: |
+      !(endsWith('main', github.ref_name) ||
+      endsWith('master', github.ref_name) ||
+      endsWith('dev', github.ref_name) ||
+      endsWith('development', github.ref_name))
+    uses: 365scores/workflows/.github/workflows/FB_Push_Nuget_any_project.yml@main
+    with:
+      project_path: ${{ github.event.inputs.project_path }}
+    secrets: inherit
