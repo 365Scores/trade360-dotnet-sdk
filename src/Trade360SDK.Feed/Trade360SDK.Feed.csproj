@@ -3,12 +3,12 @@
 	<PropertyGroup>
 		<TargetFramework>netstandard2.1</TargetFramework>
 		<Nullable>enable</Nullable>
-        <PackageVersion>2.1.1-365scores.1</PackageVersion>
+        <PackageVersion>365.1.0</PackageVersion>
         <PackageReleaseNotes>
             - 2.0.0 Added `TransportMessageHeaders` as part of the `IEntityHandler.ProcessAsync` method signature
             - 2.1.0 RmqConnectionSettings: optional CustomQueueName; queue name is resolved in RabbitMqFeed (default _{PackageId}_)
             - 2.1.1 NetworkRecoveryInterval default remains 30s; customers may set 5–4,294,967s (TRGN-4200)
-            - 2.1.1-365scores.1 RmqConnectionSettings.ConsumerDispatchConcurrency (default 1) for parallel async consumer dispatch
+            - 365.1.0 RmqConnectionSettings.ConsumerDispatchConcurrency (default 1) for parallel async consumer dispatch
         </PackageReleaseNotes>
 	</PropertyGroup>
 
