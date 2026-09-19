@@ -72,6 +72,10 @@ namespace Trade360SDK.Feed.RabbitMQ
                 RequestedHeartbeat = TimeSpan.FromSeconds(_settings.RequestedHeartbeatSeconds),
                 NetworkRecoveryInterval = TimeSpan.FromSeconds(_settings.NetworkRecoveryInterval),
                 DispatchConsumersAsync = _settings.DispatchConsumersAsync,
+                // Default in RabbitMQ.Client is 1 (serial). Configurable for high-throughput InPlay/PreMatch.
+                ConsumerDispatchConcurrency = _settings.ConsumerDispatchConcurrency < 1
+                    ? (ushort)1
+                    : _settings.ConsumerDispatchConcurrency,
                 AutomaticRecoveryEnabled = true, // Enable automatic connection recovery
                 TopologyRecoveryEnabled = true // Disable topology recovery to catch the event ourselves
             };
@@ -100,11 +104,14 @@ namespace Trade360SDK.Feed.RabbitMQ
                     consumer: _consumer);
 
                 _logger.LogInformation(
-                    "Connected to RabbitMQ, consuming queue '{QueueName}' (Host={Host}, VirtualHost={VirtualHost}, Ssl={Ssl}).",
+                    "Connected to RabbitMQ, consuming queue '{QueueName}' (Host={Host}, VirtualHost={VirtualHost}, Ssl={Ssl}, Prefetch={Prefetch}, ConsumerDispatchConcurrency={Concurrency}, AutoAck={AutoAck}).",
                     ResolveConsumeQueueName(_settings),
                     _settings.Host,
                     _settings.VirtualHost,
-                    _settings.SslEnabled);
+                    _settings.SslEnabled,
+                    _settings.PrefetchCount,
+                    _factory.ConsumerDispatchConcurrency,
+                    _settings.AutoAck);
             }
             catch (OperationCanceledException)
             {

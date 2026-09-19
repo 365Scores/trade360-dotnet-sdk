@@ -11,6 +11,12 @@
         public string? Password { get; set; }
         public ushort PrefetchCount { get; set; } = 100; // Default 100;
         public bool DispatchConsumersAsync { get; set; } = true; // Default true;
+        /// <summary>
+        /// Max concurrent HandleBasicDeliver invocations for the single consumer.
+        /// RabbitMQ.Client default is 1 (serial). Raise this (e.g. 8–16) for high-throughput feeds.
+        /// PrefetchCount should be &gt;= ConsumerDispatchConcurrency when AutoAck is false.
+        /// </summary>
+        public ushort ConsumerDispatchConcurrency { get; set; } = 1;
         public bool AutomaticRecoveryEnabled { get; set; } = true; // Default true;
         public bool AutoAck { get; set; } = true; // Default true;
         public int RequestedHeartbeatSeconds { get; set; } = 30; // Default 30 seconds

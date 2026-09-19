@@ -53,6 +53,11 @@ namespace Trade360SDK.Feed.RabbitMQ.Validators
                     nameof(settings.NetworkRecoveryInterval));
             }
 
+            if (settings.ConsumerDispatchConcurrency < 1)
+                throw new ArgumentException(
+                    "ConsumerDispatchConcurrency must be at least 1.",
+                    nameof(settings.ConsumerDispatchConcurrency));
+
             if (!string.IsNullOrWhiteSpace(settings.CustomQueueName) && settings.CustomQueueName.Trim().Length > RabbitMqFeed.ConsumeQueueNameMaxLength)
                 throw new ArgumentException(
                     $"CustomQueueName must be at most {RabbitMqFeed.ConsumeQueueNameMaxLength} characters.",
